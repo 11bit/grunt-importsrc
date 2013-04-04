@@ -96,13 +96,14 @@ module.exports = function(grunt) {
 
     sections.forEach(function(section) {
       var concatOpt = util.extractSectionOption(section, 'concat');
+      var checkMinifiedOpt = util.extractSectionOption(section, 'checkMinified');
       var updateOpt = util.extractSectionOption(section, 'update');
       var replaceOpt = util.extractSectionOption(section, 'replace');
       var destOpt = util.extractSectionOption(section, 'dest');
       var outputFilepath;
 
       if (concatOpt) {
-        outputFilepath = concatSourceFiles(section, concatOpt);
+        outputFilepath = concatSourceFiles(section, concatOpt, checkMinifiedOpt);
       }
 
       if (updateOpt) {
@@ -136,7 +137,7 @@ module.exports = function(grunt) {
    * @return {String}             The output file path.
    */
 
-  function concatSourceFiles(section, concatDest) {
+  function concatSourceFiles(section, concatDest, checkMinified) {
     // extract file paths that will be read and concatenated.
     var sources = util.extractFilePaths(section, util.getFileExtension(concatDest)).map(addRootPath).filter(function(filepath) {
       if (!grunt.file.exists(filepath)) {
@@ -146,6 +147,18 @@ module.exports = function(grunt) {
         return true;
       }
     });
+
+    if (checkMinified) {
+      sources = sources.map(function(filepath){
+        if (util.getFileExtension(filepath) === '.js') {
+          var minified = filepath.substr(0, filepath.lastIndexOf('.')) + '.min.js';
+          if (grunt.file.exists(minified)){
+            return minified; 
+          } 
+        }
+        return filepath;
+      })
+    }
 
     var concatFile = sources.map(grunt.file.read).join(grunt.util.normalizelf(grunt.util.linefeed));
     grunt.file.write(concatDest, concatFile);

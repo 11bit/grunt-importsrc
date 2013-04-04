@@ -15,10 +15,15 @@ exports.importsrc = {
   },
 
   concat: function(test) {
-    test.expect(2);
+    test.expect(3);
 
     var actual = grunt.file.read('temp/scripts/importsrcs-concat_output.js');
     var expected = grunt.file.read('test/expected/scripts/importsrcs-concat_output.js');
+
+    test.equal(actual, expected, 'should concat js files');
+
+    actual = grunt.file.read('temp/scripts/importsrcs-concat_output_check-minified.js');
+    expected = grunt.file.read('test/expected/scripts/importsrcs-concat_output_check-minified.js');
 
     test.equal(actual, expected, 'should concat js files');
 
