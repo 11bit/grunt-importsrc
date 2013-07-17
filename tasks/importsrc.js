@@ -119,9 +119,9 @@ module.exports = function(grunt) {
       var replacement;
 
       if (extension === '.js') {
-        replacement = '<script src="' + outputFilepath + '"></script>';
+        replacement = '<script src="' + outputFilepath.replace(/\\/g, "/") + '"></script>';
       } else if (extension === '.css') {
-        replacement = '<link rel="stylesheet" href="' + outputFilepath + '">';
+        replacement = '<link rel="stylesheet" href="' + outputFilepath.replace(/\\/g, "/") + '">';
       }
 
       content = content.replace(new RegExp(util.escapeRegExp(section), 'gi'), replacement);
